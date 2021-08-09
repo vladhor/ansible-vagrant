@@ -1,0 +1,7 @@
+- name: MASTER PLAY
+  hosts: all
+  gather_facts: false
+  roles:
+    - pre-config
+    - user-creation
+    - post-config

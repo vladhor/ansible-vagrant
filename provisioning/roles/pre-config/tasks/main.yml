@@ -1,0 +1,8 @@
+- name: install initiall OS packages 
+  dnf: 
+    name: 
+      - vim
+      - git
+      - bash-completion
+    state: present
+

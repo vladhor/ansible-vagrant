@@ -1,0 +1,24 @@
+- name: create ssh directory in ansible users home
+  ansible.builtin.file:
+    path: /home/ansible/.ssh
+    state: directory
+    owner: ansible
+    group: ansible
+    mode: '0700'
+
+- name: copy vagrants ssh directory to ansible user
+  ansible.builtin.copy:
+    src: /home/vagrant/.ssh/authorized_keys
+    dest: /home/ansible/.ssh/
+    owner: ansible
+    group: ansible
+    mode: '0600'
+    remote_src: true
+
+- name: allow password authentification
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    insertbefore: "#PasswordAuthentication"
+    line: "PasswordAuthentication yes"
+  notify: restart sshd

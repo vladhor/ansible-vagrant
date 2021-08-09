@@ -1,0 +1,15 @@
+- name: create user ansible 
+  ansible.builtin.user:
+    name: "{{ users }}"
+    state: present
+    shell: /bin/bash
+    groups: wheel
+    comment: "User to maintain ansible in guest servers under vagrant" 
+    password: "{{ 'ansible' | password_hash('sha512', 'mysecretsalt') }}"
+    update_password: on_create
+
+- name: configure sudo 
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/ansible
+    content: "ansible ALL=(ALL) NOPASSWD: ALL"
+    mode: '0440'
