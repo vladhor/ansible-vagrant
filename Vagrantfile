@@ -5,23 +5,22 @@ Vagrant.configure("2") do |config|
   end
   
   config.vm.box = "generic/centos8"
-# config.ssh.username = 'ansible'
   
   VAGRANT_COMMAND = ARGV[0]
   if VAGRANT_COMMAND == "ssh"
     config.ssh.username = 'ansible'
   end 
 
-  config.vm.define "master" do |master|
-    master.vm.hostname = "master"
-    master.vm.network "private_network", ip: "192.168.10.20"
-    master.vm.provider "virtualbox" do |v|
-      v.name = "master"
+  config.vm.define "control" do |control|
+    control.vm.hostname = "control"
+    control.vm.network "private_network", ip: "192.168.10.20"
+    control.vm.provider "virtualbox" do |v|
+      v.name = "Controlnode"
       v.linked_clone = true
       v.memory = 2048
       v.cpus = 1
     end
-    master.vm.provision "ansible" do |ansible|
+    control.vm.provision "ansible" do |ansible|
       ansible.playbook = "provisioning/master.yml"
       ansible.config_file = "provisioning/ansible.cfg"
       ansible.host_key_checking = false
@@ -31,16 +30,16 @@ Vagrant.configure("2") do |config|
 
 N = 5
   (1..N).each do |machine_id|
-    config.vm.define "host-#{machine_id}" do |host|
-      host.vm.hostname = "host-#{machine_id}"
-      host.vm.network "private_network", ip: "192.168.10.2#{machine_id}"
-      host.vm.provider "virtualbox" do |v|
-        v.name = "host-#{machine_id}"
+    config.vm.define "node-#{machine_id}" do |node|
+      node.vm.hostname = "node-#{machine_id}"
+      node.vm.network "private_network", ip: "192.168.10.2#{machine_id}"
+      node.vm.provider "virtualbox" do |v|
+        v.name = "Node-#{machine_id}"
         v.linked_clone = true
         v.memory = 1024
         v.cpus = 1
       end
-      host.vm.provision "ansible" do |ansible|
+      node.vm.provision "ansible" do |ansible|
         ansible.playbook = "provisioning/hosts.yml"
         ansible.config_file = "provisioning/ansible.cfg"
         ansible.host_key_checking = false
